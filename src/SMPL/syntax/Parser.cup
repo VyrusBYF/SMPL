@@ -68,7 +68,7 @@ terminal String UNI;
 /* Non terminals */
 non terminal ASTProgram program;
 non terminal ASTStmtSequence stmtList;
-non terminal ASTStatement stmt;
+non terminal ASTExp stmt;
 non terminal ASTStatement condition;
 
 non terminal ArrayList<ASTExp> expList;

@@ -5,31 +5,31 @@ import java.util.*;
 
 public class ASTStmtSequence extends ASTStatement {
 
-    ArrayList<ASTStatement> seq;		// sequence of commands
+    ArrayList<ASTExp> seq;		// sequence of commands
 
     public ASTStmtSequence() {
 	seq = new ArrayList<>();
     }
     
-    public ASTStmtSequence(ArrayList<ASTStatement> stmts) {
+    public ASTStmtSequence(ArrayList<ASTExp> stmts) {
         seq = stmts;
     }
 
-    public ASTStmtSequence(ASTStatement s) {
+    public ASTStmtSequence(ASTExp s) {
 	this();
 	seq.add(s);
     }
 
-    public ArrayList<ASTStatement> getSeq() {
+    public ArrayList<ASTExp> getSeq() {
 	return seq;
     }
 
-    public ASTStmtSequence add(ASTStatement s) {
+    public ASTStmtSequence add(ASTExp s) {
 	seq.add(s);
 	return this;
     }
     
-    public ASTStmtSequence add(ArrayList<ASTStatement> s) {
+    public ASTStmtSequence add(ArrayList<ASTExp> s) {
 	seq.addAll(s);
 	return this;
     }
@@ -44,7 +44,7 @@ public class ASTStmtSequence extends ASTStatement {
     public String toString() {
 
 	String result = "";
-        for (ASTStatement stmt : seq) {
+        for (ASTExp stmt : seq) {
             result = result + stmt.toString() + "\n";
         }
         

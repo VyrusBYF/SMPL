@@ -3,6 +3,7 @@ package SMPL.semantics;
 import SMPL.syntax.ASTConditional;
 import SMPL.syntax.ASTProgram;
 import SMPL.syntax.ASTDefine;
+import SMPL.syntax.ASTExp;
 import SMPL.syntax.ASTProcCall;
 import SMPL.syntax.ASTStatement;
 import SMPL.syntax.ASTStmtSequence;
@@ -29,7 +30,7 @@ public interface Visitor {
 	throws Exception;
 
     // statements
-    public Object visitASTStatement(ASTStatement exp, Object arg)
+    public Object visitASTExp(ASTExp exp, Object arg)
 	throws Exception ;
     public Object visitASTStmtSequence(ASTStmtSequence exp,
 				    Object arg)

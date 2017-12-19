@@ -6,6 +6,7 @@ package SMPL.semantics;
 
 import SMPL.syntax.ASTConditional;
 import SMPL.syntax.ASTDefine;
+import SMPL.syntax.ASTExp;
 import SMPL.syntax.ASTExpAdd;
 import SMPL.syntax.ASTExpAnd;
 import SMPL.syntax.ASTExpDiv;
@@ -37,17 +38,17 @@ public class SMPLEvaluator implements Visitor {
 
     @Override
     public Object visitASTProgram(ASTProgram exp, Object arg) throws Exception {
-        ArrayList<ASTStatement> s = exp.getStatements().getSeq();
+        ArrayList<ASTExp> s = exp.getStatements().getSeq();
         Iterator iter = s.iterator();
         while(iter.hasNext()){
-            ASTStatement e = (ASTStatement) iter.next();
+            ASTExp e = (ASTExp) iter.next();
             result = e.visit(this, arg);
         }
         return result;
     }
 
     @Override
-    public Object visitASTStatement(ASTStatement exp, Object arg) throws Exception {
+    public Object visitASTExp(ASTExp exp, Object arg) throws Exception {
         return exp.visit(this, arg);
     }
 

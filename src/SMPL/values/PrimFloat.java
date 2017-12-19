@@ -35,53 +35,38 @@ public class PrimFloat extends PrimitiveValue {
     public PrimitiveValue add(PrimitiveValue val) throws Exception {
         if (!val.isNumber()) {
             throw new Exception("Types no compatible with operation.");
-        } else if (val.isInt()) {
-            return new PrimInt(intValue() + val.intValue());
-        } else {
+        } else 
             return new PrimFloat(floatValue() + val.floatValue());
-        }
     }
     
     @Override
     public PrimitiveValue sub(PrimitiveValue val) throws Exception {
         if (!val.isNumber()) {
             throw new Exception("Types no compatible with operation.");
-        } else if (val.isInt()) {
-            return new PrimInt(intValue() - val.intValue());
-        } else {
+        } else 
             return new PrimFloat(floatValue() - val.floatValue());
-        }
     }
     @Override
     public PrimitiveValue mul(PrimitiveValue val) throws Exception {
         if (!val.isNumber()) {
             throw new Exception("Types no compatible with operation.");
-        } else if (val.isInt()) {
-            return new PrimInt(intValue() * val.intValue());
-        } else {
+        } else 
             return new PrimFloat(floatValue() * val.floatValue());
-        }
     }
     @Override
     public PrimitiveValue div(PrimitiveValue val) throws Exception {
         if (!val.isNumber()) {
             throw new Exception("Types no compatible with operation.");
-        } else if (val.isInt()) {
-            return new PrimInt(intValue() / val.intValue());
-        } else {
+        } else
             return new PrimFloat(floatValue() / val.floatValue());
-        }
     }
     
     @Override
     public PrimitiveValue mod(PrimitiveValue val) throws Exception {
         if (!val.isNumber()) {
             throw new Exception("Types no compatible with operation.");
-        } else if (val.isInt()) {
-            return new PrimInt(intValue() % val.intValue());
-        } else {
+        } else
             return new PrimFloat(floatValue() % val.floatValue());
-        }
     }
     
     @Override
@@ -94,7 +79,7 @@ public class PrimFloat extends PrimitiveValue {
     }
     @Override
     public PrimitiveValue more(PrimitiveValue val) throws Exception {
-        if (! val.isNumber()) {
+        if (!val.isNumber()) {
             throw new Exception("Types no compatible with operation.");
         } else {
             return new PrimBoolean(floatValue() > val.floatValue());

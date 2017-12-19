@@ -4,10 +4,12 @@
  */
 package SMPL.syntax;
 
+import SMPL.semantics.Visitor;
+
 /**
  *
  * @author newts
  */
-public abstract class ASTExp extends ASTStatement {
-    
+public abstract class ASTExp {
+    public abstract Object visit(Visitor v, Object arg) throws Exception;
 }

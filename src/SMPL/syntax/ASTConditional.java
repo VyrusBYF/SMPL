@@ -10,7 +10,7 @@ import java.util.ArrayList;
 */
 public class ASTConditional extends ASTStatement {
   ASTExp condition;
-  ArrayList<ASTStatement> body;
+  ArrayList<ASTExp> body;
 
   public ASTConditional(ASTExp condition, ASTStmtSequence s) {
     this.condition = condition;
@@ -21,7 +21,7 @@ public class ASTConditional extends ASTStatement {
     return condition;
   }
   
-  public ArrayList<ASTStatement> getBody() {
+  public ArrayList<ASTExp> getBody() {
       return body;
   }
 

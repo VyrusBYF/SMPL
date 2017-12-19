@@ -10,8 +10,7 @@ import SMPL.semantics.Visitor;
  *
  * @author newts
  */
-public abstract class ASTStatement {
+public abstract class ASTStatement extends ASTExp{
     
-    public abstract Object visit(Visitor v, Object arg) throws Exception;
     
 }
