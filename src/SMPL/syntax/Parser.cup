@@ -1,0 +1,184 @@
+package SMPL.syntax;
+
+import java_cup.runtime.*;
+import java.io.*;
+import java.util.*;
+import SMPL.values.*;
+import SMPL.semantics.*;
+
+
+/* Preliminaries to set up and use the scanner.  */
+parser code {:
+		SMPLLexer lexer;
+
+		public SMPLParser(SMPLLexer l) {
+		    // As of CUP v0.11, need to pass Lexer to superclass
+		    super(l);
+		    lexer = l;
+		}
+
+		public void report_error(String message, Object info) {
+		    System.err.println(message);
+		}
+
+		public void syntax_error(Symbol cur_token) {
+		    System.err.print("Line " + lexer.getLine() +
+				     " near char " + lexer.getChar() + ": ");
+		    report_error("Syntax error", cur_token);
+		    System.err.println ("Encountered token " + cur_token +
+					": " + lexer.getText());
+		}
+	    :};
+
+/* Terminals (tokens returned by the scanner). */
+// commands
+terminal PAIR, ISPAIR, CAR, CDR, LIST, SIZE, ISEQV, ISEQUAL, SUBSTR, ELIST;
+
+// special symbols
+terminal LPAREN, RPAREN, COLON, LBRACE, RBRACE, COMMA, SEMI;
+
+// arithmetic operators
+terminal PLUS, MINUS, MUL, DIV, MOD, EXP;
+// bitwise bool
+terminal BITAND, BITOR, BITNOT;
+// logical operators
+terminal LESS, MORE, EQUAL, LRE, MRE, NE;
+// boolean symbols
+terminal NOT, AND, OR;
+// string operator
+terminal CONCAT;
+
+// other commands
+terminal DEFINE, LET, PROC, CALL, LAZY, CASE;
+terminal PROCEDURE, IF, THEN;
+terminal PRINT, PRINTLN, READ, READINT;
+
+// terminals with values
+terminal Integer INT;
+terminal Integer BINARY;
+terminal Integer HEX;
+terminal Boolean TRUE;
+terminal Boolean FALSE;
+terminal Double FLOAT;
+terminal String ID;
+terminal String CON;
+terminal Character CHAR;
+terminal String UNI;
+
+/* Non terminals */
+non terminal ASTProgram program;
+non terminal ASTStmtSequence stmtList;
+non terminal ASTStatement stmt;
+non terminal ASTStatement condition;
+
+non terminal ArrayList<ASTExp> expList;
+non terminal ASTExp expression;
+non terminal ASTExp valExp;
+non terminal ASTExp term;
+non terminal ASTExp factor;
+non terminal ASTExp boolExp;
+non terminal ASTExp andExp;
+non terminal ASTExp notExp;
+non terminal ASTExp logExp;
+non terminal PrimitiveValue number;
+non terminal ArrayList<String> idList;
+non terminal ArrayList<ASTExp> numList;
+non terminal empty;
+
+/* Grammar rules */
+
+program ::= stmtList:l  {: RESULT = new ASTProgram(l); :};
+
+stmtList ::= stmtList:l stmt:s {: RESULT = l.add(s); :} |
+	     stmt:s {: RESULT = new ASTStmtSequence(s); :};
+
+stmt ::= 
+                PROCEDURE ID:name LPAREN idList:id RPAREN stmtList:l SEMI {:
+                :}
+                 |
+                condition:c {:
+                    ASTStmtSequence seq = new ASTStmtSequence();
+                    seq.add(c);
+                    RESULT = seq;
+                :} |
+                valExp:e {: RESULT = e; :}
+                ;
+
+valExp ::= boolExp:b {: RESULT=b;:} |
+        expression:e {: RESULT =e; :};
+
+idList ::= idList:l COMMA ID:i {:
+                    l.add(i);
+                    RESULT = l;
+                :} |
+            ID:i {:
+                    ArrayList<String> l = new ArrayList<>();
+                    l.add(i);
+                    RESULT = l;
+                :} |
+            empty {: RESULT = new ArrayList<String>();:}
+                ;
+
+numList ::= expList:e {: RESULT = e; :} |
+            empty {: RESULT = new ArrayList<ASTExp>();:}
+                ;         
+
+condition ::= IF boolExp:e THEN stmtList:s SEMI {:
+                    RESULT = new ASTConditional(e,s);
+                :}
+                ;
+
+boolExp ::= logExp:log OR logExp:le {:
+                RESULT = new ASTExpOr(log,le);
+            :} |
+            andExp:e {: RESULT = e; :};
+
+andExp ::= logExp:log AND logExp:le {:
+                RESULT = new ASTExpAnd(log,le);
+            :} |
+            notExp:e {: RESULT = e; :};
+
+notExp ::= NOT logExp:log {: RESULT = new ASTExpNot(log); :} |
+            logExp:log {: RESULT = log; :};
+
+logExp ::= expression:e LESS expression:ex {:
+                RESULT = new ASTExpLess(e,ex);
+            :} |
+            expression:e MORE expression:ex {:
+                RESULT = new ASTExpMore(e,ex);    
+            :} |
+            expression:e EQUAL expression:ex {:
+                RESULT = new ASTExpEqual(e,ex);
+            :}
+            ;
+
+expList ::= expList:l COMMA expression:e {: l.add(e); RESULT = l; :} |
+	    expression:e {: ArrayList<ASTExp> list = new ArrayList<ASTExp>();
+	    		    list.add(e);
+			    RESULT = list;
+			 :};
+
+expression ::= 	expression:e PLUS term:t {:
+			RESULT = new ASTExpAdd(e, t); :} |
+		expression:e MINUS term:t {:
+			RESULT = new ASTExpSub(e, t); :} |
+		term:t {: RESULT = t; :};
+
+term ::= term:t MUL factor:f {:
+		RESULT = new ASTExpMul(t, f); :} |
+	 term:t DIV factor:f {:
+		RESULT = new ASTExpDiv(t, f); :} |
+	 term:t MOD factor:f {:
+		RESULT = new ASTExpMod(t, f); :} |
+	 factor:f {: RESULT = f; :};
+
+factor ::= number:ilit {: RESULT = new ASTExpLit(ilit); :} |
+           ID:v {: RESULT = new ASTExpVar(v); :} |
+	   LPAREN expression:e RPAREN {: RESULT = e; :}	|
+           LBRACE expression:e RBRACE {: RESULT = e; :};
+
+number ::= INT:i {: RESULT = PrimitiveValue.make(i); :} |
+           FLOAT:r {: RESULT = PrimitiveValue.make(r); :} ;
+
+
+empty ::= ;
