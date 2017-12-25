@@ -53,19 +53,25 @@ alpha = [a-zA-Z_]
 
 num = [0-9]
 
-bin = [0-1]
+sign = [\-]{ws}+|[\+]{ws}+|[^$]
+
+bin = [01]
 
 hex = {num}|[a-fA-F]
 
-symbols = [\*\+\?\-\\\/\^\%\&\|\~\=\<\>\!\@\:\(\)\[\]\{\}\.]
+symbols = [^0-9a-zA-Z\(\)\{\}\[\]\"\'\,\:]
 
 dq = [\"]
 
 sq = [\']
 
-alphanum = {alpha}|{num}|{symbols}
+alphanum = {alpha}|{num}
 
-strng = {alphanum}|[\\]|[\\n]|[\\t]
+alphanumsym = {alphanum}|{symbols} 
+
+alphasym = {alpha}|{symbols}
+
+strng = {alphanumsym}|[\\]|[\n]|[\t]
 
 %%
 
@@ -82,20 +88,20 @@ strng = {alphanum}|[\\]|[\\n]|[\\t]
 <YYINITIAL>	{ws}+"*"{ws}+   {return new Symbol(sym.MUL);}
 <YYINITIAL>	{ws}+"/"{ws}+   {return new Symbol(sym.DIV);}
 <YYINITIAL>	{ws}+"%"{ws}+   {return new Symbol(sym.MOD);}
-<YYINITIAL>	{ws}+"^"{ws}+   {return new Symbol(sym.EXP);}
+<YYINITIAL>     "^"             {return new Symbol(sym.EXP);}
 
-<YYINITIAL>	{ws}+"&"{ws}+   {return new Symbol(sym.BITAND);}
-<YYINITIAL>	{ws}+"|"{ws}+   {return new Symbol(sym.BITOR);}
-<YYINITIAL>	{ws}+"~"{ws}+   {return new Symbol(sym.BITNOT);}
+<YYINITIAL>	"&"             {return new Symbol(sym.BITAND);}
+<YYINITIAL>	"|"             {return new Symbol(sym.BITOR);}
+<YYINITIAL>	"~"             {return new Symbol(sym.BITNOT);}
 
-<YYINITIAL>	{ws}+"="{ws}+   {return new Symbol(sym.EQUAL);}
-<YYINITIAL>	{ws}+">"{ws}+   {return new Symbol(sym.MORE);}
-<YYINITIAL>	{ws}+"<"{ws}+   {return new Symbol(sym.LESS);}
-<YYINITIAL>	{ws}+"<="{ws}+  {return new Symbol(sym.LRE);}
-<YYINITIAL>	{ws}+">="{ws}+  {return new Symbol(sym.MRE);}
-<YYINITIAL>	{ws}+"!="{ws}+  {return new Symbol(sym.NE);}
+<YYINITIAL>	"="             {return new Symbol(sym.EQUAL);}
+<YYINITIAL>	">"             {return new Symbol(sym.MORE);}
+<YYINITIAL>	"<"             {return new Symbol(sym.LESS);}
+<YYINITIAL>	"<="            {return new Symbol(sym.LRE);}
+<YYINITIAL>	">="            {return new Symbol(sym.MRE);}
+<YYINITIAL>	"!="            {return new Symbol(sym.NE);}
 
-<YYINITIAL>	{ws}+"@"{ws}+   {return new Symbol(sym.CONCAT);}
+<YYINITIAL>	"@"             {return new Symbol(sym.CONCAT);}
 
 <YYINITIAL>	"("             {return new Symbol(sym.LPAREN);}
 <YYINITIAL>	")"             {return new Symbol(sym.RPAREN);}
@@ -140,13 +146,13 @@ strng = {alphanum}|[\\]|[\\n]|[\\t]
 
 <YYINITIAL>	"#e"            {return new Symbol(sym.ELIST);}
 
-<YYINITIAL>   [\-]{num}+|{num}+ {
+<YYINITIAL>     {sign}{ws}+{num}+          {
                                 // INTEGER
                                 return new Symbol(sym.INT, 
                                     new Integer(yytext()));
                                 }
 
-<YYINITIAL>    "#b"{bin}+           {
+<YYINITIAL>    "#b""0b"{bin}+   {
                                 // BINARY
                                 return new Symbol(sym.BINARY, 
                                     new Integer(yytext()));
@@ -158,28 +164,32 @@ strng = {alphanum}|[\\]|[\\n]|[\\t]
                                     new Integer(yytext()));
                                 }
 
-<YYINITIAL>  {num}*[\.]{num}+|{num}+[\.]{num}* 	{
-			 // FLOAT
-	       		 return new Symbol(sym.FLOAT, 
+<YYINITIAL>    {sign}[\.]{num}+|{sign}{num}+[\.]{num}* 	
+                                {
+                                // FLOAT
+                                return new Symbol(sym.FLOAT, 
 			 	         new Double(yytext()));
-	       		}
+                                }
 
-<YYINITIAL>    {alpha}{alphanum}* {
-	       // VARIABLE
-	       return new Symbol(sym.ID, yytext());
-	       }
+<YYINITIAL>    ^[^#]{alphanumsym}*{alphasym}+{alphanumsym}*
+                                {
+                                // VARIABLE
+                                return new Symbol(sym.ID, yytext());
+                                }
 
-<YYINITIAL>    {dq}{1}{strng}{dq}{1} {
-	       // STRING CONSTANT
-	       return new Symbol(sym.CON, yytext());
-	       }
+<YYINITIAL>    {dq}{1}{strng}{dq}{1} 
+                                {
+                                // STRING CONSTANT
+                                return new Symbol(sym.STR, yytext());
+                                }
 
-<YYINITIAL>    {sq}{1}{strng}{1}{sq}{1} {
-	       // CHARACTER LITERALS
-	       return new Symbol(sym.CHAR, yytext());
-	       }
+<YYINITIAL>    {sq}{1}{strng}{1}{sq}{1} 
+                                {
+                                // CHARACTER LITERALS
+                                return new Symbol(sym.CHAR, yytext());
+                                }
 
-<YYINITIAL>    {sq}{1}"#u"{hex}{4}{sq}{1} {
-	       // UNICODE CHARACTERS
-	       return new Symbol(sym.UNI, yytext());
-	       }
+<YYINITIAL>    "#u"{hex}{4}     {
+                                // UNICODE CHARACTERS
+                                return new Symbol(sym.UNI, yytext());
+                                }
