@@ -10,9 +10,9 @@ import java.util.ArrayList;
 */
 public class ASTProcCall extends ASTStatement {
   String name;
-  ArrayList<String> ids;
+  ArrayList<ASTExp> ids;
 
-  public ASTProcCall (String name, ArrayList<String> ids) {
+  public ASTProcCall (String name, ArrayList<ASTExp> ids) {
     this.name = name;
     this.ids = ids;
   }
@@ -21,13 +21,13 @@ public class ASTProcCall extends ASTStatement {
     return name;
   }
   
-  public ArrayList<String> getIds() {
+  public ArrayList<ASTExp> getIds() {
       return ids;
   }
 
   @Override
-  public Object visit(Visitor v, Object state) throws Exception {
-    return v.visitASTProcCall(this, state);
+  public Object visit(Visitor v, Object arg) throws Exception {
+    return v.visitASTProcCall(this, arg);
   }
 
 }

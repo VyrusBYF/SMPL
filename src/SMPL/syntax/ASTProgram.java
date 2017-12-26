@@ -8,9 +8,9 @@ import SMPL.semantics.Visitor;
  */
 public class ASTProgram extends ASTExp{
 
-    ASTStmtSequence statements;
+    ASTExpSequence statements;
 
-    public ASTProgram(ASTStmtSequence statements) {
+    public ASTProgram(ASTExpSequence statements) {
         this.statements = statements;
     }
 
@@ -18,12 +18,12 @@ public class ASTProgram extends ASTExp{
      *
      * @return The sequence of statements making up this program
      */
-    public ASTStmtSequence getStatements() {
+    public ASTExpSequence getStatements() {
         return statements;
     }
 
     @Override
-    public Object visit(Visitor v, Object state) throws Exception {
-        return v.visitASTProgram(this, state);
+    public Object visit(Visitor v, Object arg) throws Exception {
+        return v.visitASTProgram(this, arg);
     }
 }

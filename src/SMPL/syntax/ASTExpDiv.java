@@ -25,8 +25,8 @@ public class ASTExpDiv extends ASTExp {
   }
 
   @Override
-  public Object visit(Visitor v, Object state) throws Exception {
-    return v.visitASTExpDiv(this, state);
+  public Object visit(Visitor v, Object arg) throws Exception {
+    return v.visitASTExpDiv(this, arg);
   }
 
 }

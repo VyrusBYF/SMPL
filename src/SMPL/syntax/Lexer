@@ -88,30 +88,32 @@ strng = {alphanumsym}|[\\]|[\n]|[\t]
 <YYINITIAL>	{ws}+"*"{ws}+   {return new Symbol(sym.MUL);}
 <YYINITIAL>	{ws}+"/"{ws}+   {return new Symbol(sym.DIV);}
 <YYINITIAL>	{ws}+"%"{ws}+   {return new Symbol(sym.MOD);}
-<YYINITIAL>     "^"             {return new Symbol(sym.EXP);}
+<YYINITIAL>     {ws}+"^"{ws}+   {return new Symbol(sym.EXP);}
 
-<YYINITIAL>	"&"             {return new Symbol(sym.BITAND);}
-<YYINITIAL>	"|"             {return new Symbol(sym.BITOR);}
-<YYINITIAL>	"~"             {return new Symbol(sym.BITNOT);}
+<YYINITIAL>	{ws}+"&"{ws}+   {return new Symbol(sym.BITAND);}
+<YYINITIAL>	{ws}+"|"{ws}+   {return new Symbol(sym.BITOR);}
+<YYINITIAL>	{ws}+"~"{ws}+   {return new Symbol(sym.BITNOT);}
 
-<YYINITIAL>	"="             {return new Symbol(sym.EQUAL);}
-<YYINITIAL>	">"             {return new Symbol(sym.MORE);}
-<YYINITIAL>	"<"             {return new Symbol(sym.LESS);}
-<YYINITIAL>	"<="            {return new Symbol(sym.LRE);}
-<YYINITIAL>	">="            {return new Symbol(sym.MRE);}
-<YYINITIAL>	"!="            {return new Symbol(sym.NE);}
+<YYINITIAL>	{ws}+"="{ws}+   {return new Symbol(sym.EQUAL);}
+<YYINITIAL>	{ws}+">"{ws}+   {return new Symbol(sym.MORE);}
+<YYINITIAL>	{ws}+"<"{ws}+   {return new Symbol(sym.LESS);}
+<YYINITIAL>	{ws}+"<="{ws}+  {return new Symbol(sym.LRE);}
+<YYINITIAL>	{ws}+">="{ws}+  {return new Symbol(sym.MRE);}
+<YYINITIAL>	{ws}+"!="{ws}+  {return new Symbol(sym.NE);}
 
-<YYINITIAL>	"@"             {return new Symbol(sym.CONCAT);}
+<YYINITIAL>	{ws}+"@"{ws}+   {return new Symbol(sym.CONCAT);}
 
 <YYINITIAL>	"("             {return new Symbol(sym.LPAREN);}
 <YYINITIAL>	")"             {return new Symbol(sym.RPAREN);}
-
+<YYINITIAL>     "{"             {return new Symbol(sym.LBRACK);}
+<YYINITIAL>     "}"             {return new Symbol(sym.RBRACK);}
 <YYINITIAL>	"["             {return new Symbol(sym.LBRACE);}
 <YYINITIAL>	"]"             {return new Symbol(sym.RBRACE);}
 
 <YYINITIAL>	","             {return new Symbol(sym.COMMA);}
 <YYINITIAL>	":"             {return new Symbol(sym.COLON);}
 <YYINITIAL>	";"             {return new Symbol(sym.SEMI);}
+<YYINITIAL>     {ws}+"."{ws}+   {return new Symbol(sym.Dot);}
 
 <YYINITIAL>	"pair"          {return new Symbol(sym.PAIR);}
 <YYINITIAL>	"car"           {return new Symbol(sym.CAR);}
@@ -129,6 +131,7 @@ strng = {alphanumsym}|[\\]|[\n]|[\t]
 <YYINITIAL>	"def"           {return new Symbol(sym.DEFINE);}
 <YYINITIAL>	"if"            {return new Symbol(sym.IF);}
 <YYINITIAL>	"then"          {return new Symbol(sym.THEN);}
+<YYINITIAL>     "else"          {return new Symbol(sym.ELSE);}
 <YYINITIAL>	"lazy"          {return new Symbol(sym.LAZY);}
 <YYINITIAL>	"case"          {return new Symbol(sym.CASE);}
 
@@ -140,6 +143,10 @@ strng = {alphanumsym}|[\\]|[\n]|[\t]
 <YYINITIAL>	"println"       {return new Symbol(sym.PRINTLN);}
 <YYINITIAL>	"read"          {return new Symbol(sym.READ);}
 <YYINITIAL>	"readint"       {return new Symbol(sym.READINT);}
+
+<YYINITIAL>     "//"            {return new Symbol(sym.LCOMMENT);}
+<YYINITIAL>     "/*"            {return new Symbol(sym.SCOMMENT);}
+<YYINITIAL>     "*/"            {return new Symbol(sym.ECOMMENT);}
 
 <YYINITIAL>	"#t"            {return new Symbol(sym.TRUE);}
 <YYINITIAL>	"#f"            {return new Symbol(sym.FALSE);}
