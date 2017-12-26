@@ -70,6 +70,7 @@ non terminal ASTProgram program;
 non terminal ASTStmtSequence stmtList;
 non terminal ASTExp stmt;
 non terminal ASTStatement condition;
+non terminal ASTDefine definition;
 
 non terminal ArrayList<ASTExp> expList;
 non terminal ASTExp expression;
@@ -104,6 +105,11 @@ stmt ::=
                 valExp:e {: RESULT = e; :}
                 ;
 
+/*storage allocated for id and the expression is stored in it */
+
+definition ::= DEFINE ID:var expression:valueExp {:
+			RESULT = new ASTDefine(var, valueExp);
+		:};
 
 
 valExp ::= boolExp:b {: RESULT=b;:} |
