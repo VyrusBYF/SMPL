@@ -32,6 +32,7 @@ import SMPL.syntax.ASTExpStr;
 import SMPL.syntax.ASTExpSub;
 import SMPL.syntax.ASTExpUni;
 import SMPL.syntax.ASTExpVar;
+import SMPL.syntax.ASTExpWrapper;
 import SMPL.syntax.ASTLazyExp;
 import SMPL.syntax.ASTLet;
 import SMPL.syntax.ASTPrint;
@@ -123,4 +124,6 @@ public interface Visitor {
     public Object visitASTExpUni(ASTExpUni exp, Object arg) throws Exception;
 
     public Object visitASTExpChar(ASTExpChar exp, Object arg) throws Exception;
+
+    public Object visitASTExpWrapper(ASTExpWrapper exp, Object arg) throws Exception;
 }

@@ -12,7 +12,7 @@ public class ASTProcCall extends ASTStatement {
   String name;
   ASTExp args;
 
-  public ASTProcCall (String name,ASTExp ids) {
+  public ASTProcCall (String name,ASTExp args) {
     this.name = name;
     this.args = args;
   }

@@ -44,7 +44,7 @@ public class PrimitiveValue {
      * @return The integer that this value represents
      * @throws FractalException if this value does not represent an integer 
      */
-    public int intValue() throws Exception {
+    public Integer intValue() throws Exception {
         throw new Exception("Type Error: "+PrimitiveTypes.INTEGER+ " expected.");
     }
 
@@ -61,7 +61,7 @@ public class PrimitiveValue {
      * @return The floating point number that this value represents
      * @throws FractalException if this value does not represent a floating point number 
      */
-    public double floatValue() throws Exception {
+    public Double floatValue() throws Exception {
         throw new Exception("Type Error: "+PrimitiveTypes.FLOAT+ " expected.");
     }
     
@@ -157,7 +157,11 @@ public class PrimitiveValue {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public boolean getBool() {
+    public Boolean getBool() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public Object getVal() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

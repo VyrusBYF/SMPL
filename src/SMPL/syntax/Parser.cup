@@ -193,10 +193,13 @@ expListAux ::= valExp:v expListAux:a {:
             empty {: RESULT = new ASTExpList(); :};
 
 valExp ::= LET LPAREN bindings:b RPAREN expSeq:s {:
-                RESULT = new ASTLet(b,s);
+                    RESULT = new ASTLet(b,s);
                 :}|
            CALL LPAREN ID:i COMMA exp:l RPAREN {: 
-                RESULT= new ASTProcCall(i,l);
+                    RESULT= new ASTProcCall(i,l);
+                :}|
+           ID:i LPAREN exp:l RPAREN {:
+                    RESULT = new ASTProcCall(i,l);
                 :}|
            CASE LBRACK LBRACE predList:p RBRACE RBRACK {:
                     RESULT = new ASTCase(p);

@@ -9,11 +9,11 @@ package SMPL.values;
  * @author newts
  */
 public class PrimInt extends PrimitiveValue {
-    int value;
+    Integer value;
     
     public PrimInt(int val) {
         super(PrimitiveTypes.INTEGER);
-        value = val;
+        value =new  Integer(val);
     }
     
     @Override
@@ -22,13 +22,18 @@ public class PrimInt extends PrimitiveValue {
     }
     
     @Override
-    public int intValue() {
+    public Object getVal() {
         return value;
     }
     
     @Override
-    public double floatValue() {
+    public Integer intValue() {
         return value;
+    }
+    
+    @Override
+    public Double floatValue() {
+        return value.doubleValue();
     }
     
     @Override
