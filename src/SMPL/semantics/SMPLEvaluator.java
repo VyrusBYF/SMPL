@@ -105,12 +105,25 @@ public class SMPLEvaluator implements Visitor {
 
     @Override
     public Object visitASTStmtSequence(ASTStmtSequence exp, Object arg) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ASTStatement s;
+		ArrayList<ASTStatement> sseq = exp.getSeq();
+		Iterator iter = sseq.iterator();
+		while(iter.hasNext()) {
+			s = (ASTStatement) iter.next();
+			result = s.visit(this, arg);
+		}
+		// return last value evaluated
+		return result;
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public Object visitASTDefine(ASTDefine exp, Object arg) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Environment env = arg.getEnvironment();
+		result = exp.getValueExp().visit(this, arg);
+		env.put(exp.getVar(), result);
+		return result;
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
