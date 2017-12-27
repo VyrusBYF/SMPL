@@ -10,16 +10,15 @@ import java.util.ArrayList;
 */
 public class ASTDefine extends ASTStatement {
   ArrayList<String> var;
-  ArrayList<ASTExp> valueExp;
+  ASTExp valueExp;
 
   public ASTDefine (String var,ASTExp valueExp) {
     this.var = new ArrayList<>();
-    this.valueExp = new ArrayList<>();
     this.var.add(var);
-    this.valueExp.add(valueExp);
+    this.valueExp = valueExp;
   }
   
-  public ASTDefine (ArrayList<String> var,ArrayList<ASTExp> valueExp) {
+  public ASTDefine (ArrayList<String> var,ASTExp valueExp) {
     this.var = var;
     this.valueExp = valueExp;
   }
@@ -28,7 +27,7 @@ public class ASTDefine extends ASTStatement {
     return var;
   }
 
-  public ArrayList<ASTExp> getValueExp() {
+  public ASTExp getValueExp() {
     return valueExp;
   }
 

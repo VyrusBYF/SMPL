@@ -12,6 +12,11 @@ public class ASTConditional extends ASTExp {
   ASTExp condition;
   ArrayList<ASTExp> body;
   ArrayList<ASTExp> alt;
+  
+  public ASTConditional(ASTExp condition, ASTExpSequence s) {
+    this.condition = condition;
+    this.body = s.getSeq();
+  }
 
   public ASTConditional(ASTExp condition, ASTExpSequence s, ASTExpSequence f) {
     this.condition = condition;

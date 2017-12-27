@@ -3,15 +3,17 @@ package SMPL.semantics;
 import SMPL.syntax.ASTBitAnd;
 import SMPL.syntax.ASTBitNot;
 import SMPL.syntax.ASTBitOr;
+import SMPL.syntax.ASTCase;
+import SMPL.syntax.ASTComment;
 import SMPL.syntax.ASTConditional;
 import SMPL.syntax.ASTProgram;
 import SMPL.syntax.ASTDefine;
 import SMPL.syntax.ASTExp;
 import SMPL.syntax.ASTProcCall;
 import SMPL.syntax.ASTStatement;
-import SMPL.syntax.ASTStmtSequence;
 import SMPL.syntax.ASTExpAdd;
 import SMPL.syntax.ASTExpAnd;
+import SMPL.syntax.ASTExpChar;
 import SMPL.syntax.ASTExpDiv;
 import SMPL.syntax.ASTExpEqual;
 import SMPL.syntax.ASTExpLRE;
@@ -26,11 +28,17 @@ import SMPL.syntax.ASTExpNE;
 import SMPL.syntax.ASTExpNot;
 import SMPL.syntax.ASTExpOr;
 import SMPL.syntax.ASTExpSequence;
+import SMPL.syntax.ASTExpStr;
 import SMPL.syntax.ASTExpSub;
+import SMPL.syntax.ASTExpUni;
 import SMPL.syntax.ASTExpVar;
 import SMPL.syntax.ASTLazyExp;
 import SMPL.syntax.ASTLet;
+import SMPL.syntax.ASTPrint;
+import SMPL.syntax.ASTPrintLn;
 import SMPL.syntax.ASTProcDef;
+import SMPL.syntax.ASTRead;
+import SMPL.syntax.ASTReadInt;
 
 public interface Visitor {
 
@@ -41,9 +49,6 @@ public interface Visitor {
 
     // statements
     public Object visitASTExp(ASTExp exp, Object arg)
-	throws Exception ;
-    public Object visitASTStmtSequence(ASTStmtSequence exp,
-				    Object arg)
 	throws Exception ;
 
     public Object visitASTDefine(ASTDefine exp, Object arg) throws Exception;
@@ -100,4 +105,22 @@ public interface Visitor {
     public Object visitASTExpSequence(ASTExpSequence exp, Object arg) throws Exception;
 
     public Object visitASTExpList(ASTExpList exp, Object arg) throws Exception;
+
+    public Object visitASTCase(ASTCase exp, Object arg) throws Exception;
+
+    public Object visitASTRead(ASTRead exp, Object arg) throws Exception;
+
+    public Object visitASTReadInt(ASTReadInt exp, Object arg) throws Exception;
+
+    public Object visitASTPrint(ASTPrint exp, Object arg) throws Exception;
+
+    public Object visitASTPrintLn(ASTPrintLn exp, Object arg) throws Exception;
+
+    public Object visitASTComment(ASTComment exp, Object arg) throws Exception;
+
+    public Object visitASTExpStr(ASTExpStr exp, Object arg) throws Exception;
+
+    public Object visitASTExpUni(ASTExpUni exp, Object arg) throws Exception;
+
+    public Object visitASTExpChar(ASTExpChar exp, Object arg) throws Exception;
 }

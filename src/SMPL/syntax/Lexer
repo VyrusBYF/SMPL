@@ -113,7 +113,7 @@ strng = {alphanumsym}|[\\]|[\n]|[\t]
 <YYINITIAL>	","             {return new Symbol(sym.COMMA);}
 <YYINITIAL>	":"             {return new Symbol(sym.COLON);}
 <YYINITIAL>	";"             {return new Symbol(sym.SEMI);}
-<YYINITIAL>     {ws}+"."{ws}+   {return new Symbol(sym.Dot);}
+<YYINITIAL>     {ws}+"."{ws}+   {return new Symbol(sym.DOT);}
 
 <YYINITIAL>	"pair"          {return new Symbol(sym.PAIR);}
 <YYINITIAL>	"car"           {return new Symbol(sym.CAR);}

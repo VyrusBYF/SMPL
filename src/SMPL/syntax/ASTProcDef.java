@@ -11,21 +11,21 @@ import java.util.ArrayList;
 public class ASTProcDef extends ASTStatement {
   String rest;
   ArrayList<String> ids;
-  ASTStmtSequence body;
+  ASTExpSequence body;
 
   
-  public ASTProcDef (ArrayList<String> ids, ASTStmtSequence body) {
+  public ASTProcDef (ArrayList<String> ids, ASTExpSequence body) {
     this.ids = ids;
     this.body = body;
   }
   
-  public ASTProcDef (String id, ASTStmtSequence body) {
+  public ASTProcDef (String id, ASTExpSequence body) {
     ids = new ArrayList<String>();
     ids.add(id);
     this.body = body;
   }
   
-  public ASTProcDef (ArrayList<String> ids, String rest, ASTStmtSequence body) {
+  public ASTProcDef (ArrayList<String> ids, String rest, ASTExpSequence body) {
     this.rest = rest;
     this.ids = ids;
     this.body = body;
@@ -39,7 +39,7 @@ public class ASTProcDef extends ASTStatement {
       return ids;
   }
 
-  public ASTStmtSequence getBody() {
+  public ASTExpSequence getBody() {
     return body;
   }
 

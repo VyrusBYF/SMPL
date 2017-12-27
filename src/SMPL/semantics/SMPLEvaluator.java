@@ -4,27 +4,45 @@
  */
 package SMPL.semantics;
 
+import SMPL.syntax.ASTBitAnd;
+import SMPL.syntax.ASTBitNot;
+import SMPL.syntax.ASTBitOr;
+import SMPL.syntax.ASTCase;
+import SMPL.syntax.ASTComment;
 import SMPL.syntax.ASTConditional;
 import SMPL.syntax.ASTDefine;
 import SMPL.syntax.ASTExp;
 import SMPL.syntax.ASTExpAdd;
 import SMPL.syntax.ASTExpAnd;
+import SMPL.syntax.ASTExpChar;
 import SMPL.syntax.ASTExpDiv;
 import SMPL.syntax.ASTExpEqual;
+import SMPL.syntax.ASTExpLRE;
 import SMPL.syntax.ASTExpLess;
+import SMPL.syntax.ASTExpList;
 import SMPL.syntax.ASTExpLit;
+import SMPL.syntax.ASTExpMRE;
 import SMPL.syntax.ASTExpMod;
 import SMPL.syntax.ASTExpMore;
 import SMPL.syntax.ASTExpMul;
+import SMPL.syntax.ASTExpNE;
 import SMPL.syntax.ASTExpNot;
 import SMPL.syntax.ASTExpOr;
+import SMPL.syntax.ASTExpSequence;
+import SMPL.syntax.ASTExpStr;
 import SMPL.syntax.ASTExpSub;
+import SMPL.syntax.ASTExpUni;
 import SMPL.syntax.ASTExpVar;
+import SMPL.syntax.ASTLazyExp;
+import SMPL.syntax.ASTLet;
+import SMPL.syntax.ASTPrint;
+import SMPL.syntax.ASTPrintLn;
 import SMPL.syntax.ASTProcCall;
 import SMPL.syntax.ASTProcDef;
-import SMPL.syntax.ASTStmtSequence;
 import SMPL.syntax.ASTStatement;
 import SMPL.syntax.ASTProgram;
+import SMPL.syntax.ASTRead;
+import SMPL.syntax.ASTReadInt;
 import SMPL.values.PrimitiveValue;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -104,11 +122,6 @@ public class SMPLEvaluator implements Visitor {
     }
 
     @Override
-    public Object visitASTStmtSequence(ASTStmtSequence exp, Object arg) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public Object visitASTDefine(ASTDefine exp, Object arg) throws Exception {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -156,6 +169,101 @@ public class SMPLEvaluator implements Visitor {
     @Override
     public Object visitASTExpVar(ASTExpVar exp, Object arg) throws Exception {
         return exp.getVar();
+    }
+
+    @Override
+    public Object visitASTBitNot(ASTBitNot exp, Object arg) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitASTBitAnd(ASTBitAnd exp, Object arg) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitASTBitOr(ASTBitOr exp, Object arg) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitASTExpNE(ASTExpNE exp, Object arg) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitASTExpLRE(ASTExpLRE exp, Object arg) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitASTExpMRE(ASTExpMRE exp, Object arg) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitASTLazyExp(ASTLazyExp exp, Object arg) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitASTLet(ASTLet exp, Object arg) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitASTExpSequence(ASTExpSequence exp, Object arg) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitASTExpList(ASTExpList exp, Object arg) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitASTCase(ASTCase exp, Object arg) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitASTRead(ASTRead exp, Object arg) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitASTReadInt(ASTReadInt exp, Object arg) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitASTPrint(ASTPrint exp, Object arg) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitASTPrintLn(ASTPrintLn exp, Object arg) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitASTComment(ASTComment exp, Object arg) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitASTExpStr(ASTExpStr exp, Object arg) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitASTExpUni(ASTExpUni exp, Object arg) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitASTExpChar(ASTExpChar exp, Object arg) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

@@ -7,9 +7,9 @@ import java.util.ArrayList;
 public class ASTLet extends ASTStatement {
 
     ArrayList<Binding> bindings;
-    ASTStmtSequence body;
+    ASTExpSequence body;
 
-    public ASTLet(ArrayList<Binding> bs, ASTStmtSequence bod) {
+    public ASTLet(ArrayList<Binding> bs, ASTExpSequence bod) {
 	bindings = bs;
 	body = bod;
     }
@@ -18,7 +18,7 @@ public class ASTLet extends ASTStatement {
 	return bindings;
     }
 
-    public ASTStmtSequence getBody() {
+    public ASTExpSequence getBody() {
 	return body;
     }
 

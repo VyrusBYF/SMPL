@@ -51,7 +51,7 @@ terminal CONCAT;
 // other commands
 terminal DEFINE, LET, PROC, CALL, LAZY, CASE;
 terminal PROCEDURE, IF, THEN, ELSE;
-terminal PRINT, PRINTLN, READ, READINT;
+terminal PRINT, PRINTLN, READ, READINT, LCOMMENT, SCOMMENT, ECOMMENT;
 
 // terminals with values
 terminal Integer INT;
@@ -67,37 +67,40 @@ terminal String UNI;
 
 /* Non terminals */
 non terminal ASTProgram program;
-non terminal ASTStmtSequence stmtList;
 non terminal ASTExpSequence expSeq;
 non terminal ASTExp stmt;
-non terminal ASTStatement condition;
-non terminal ASTStatement proc;
-non terminal ASTStatement def;
+non terminal ASTExp condition;
+non terminal ASTExp proc;
+non terminal ASTExp def;
 
 non terminal ASTExpList expList;
 non terminal ASTExpList expListAux;
 non terminal ASTExp expression;
 non terminal ASTExp valExp;
+non terminal ASTExp caseExp;
 non terminal ASTExp exp;
 non terminal ASTExp term;
 non terminal ASTExp factor;
 non terminal ASTExp boolExp;
+non terminal ASTExp boolVal;
 non terminal ASTExp andExp;
 non terminal ASTExp notExp;
 non terminal ASTExp logExp;
 non terminal ASTExp bitLog;
 non terminal ASTExp bitNeg;
 non terminal Binding binding;
+non terminal Clause pred;
+non terminal ASTExp sysExp;
 non terminal ArrayList<Binding> bindings;
+non terminal ArrayList<Clause> predList;
 non terminal PrimitiveValue number;
 non terminal ArrayList<String> idList;
+non terminal ArrayList<String> idListAux;
 non terminal empty;
 
 precedence right COMMA;
-precedence right IF,LET;
-precedence left PROCEDURE;
-precedence left DEFINE, SEMI;
-precedence left CALL;
+precedence left IF,LET,CASE,CALL,READ,READINT,PRINT,PRINTLN;
+precedence left PROCEDURE,DEFINE,SEMI,LCOMMENT,SCOMMENT;
 precedence left OR;
 precedence left AND;
 precedence left NOT;
@@ -106,8 +109,8 @@ precedence left BITAND, BITOR;
 precedence left PLUS, MINUS;
 precedence left MUL, DIV, MOD;
 precedence left BITNOT;
-precedence right LPAREN,RPAREN,LBRACE,RBRACE,LBRACK,RBRACK,LAZY;
-precedence nonassoc ID, INT, BINARY, HEX, FLOAT, TRUE, FALSE, STR, CHAR, UNI;
+precedence right LPAREN,LBRACE,LBRACK;
+precedence nonassoc ID, INT, BINARY, HEX, FLOAT, TRUE, FALSE, STR, CHAR, UNI,LAZY;
 
 /* Grammar rules */
 
@@ -118,7 +121,9 @@ expSeq ::= expSeq:l exp:s {: RESULT = l.add(s); :} |
 
 exp ::= stmt:s {: RESULT = s; :} |
         boolExp:v {: RESULT = v; :} | 
-        expList:l {:  RESULT = l; :};
+        valExp:v {:RESULT = v; :} |
+        expList:l {:  RESULT = l; :} |
+        sysExp:e {: RESULT = e; :};
 
 stmt ::= proc:p {:
                 RESULT=p;
@@ -148,16 +153,16 @@ proc ::= PROCEDURE LPAREN LBRACE idList:id RBRACE RPAREN expSeq:l SEMI {:
 def ::=  DEFINE ID:i exp:e SEMI {:
                 RESULT = new ASTDefine(i,e);
                 :}|
-         ID:i COLON EQUAL exp:e SEMI {:
+         idList:i COLON EQUAL exp:e SEMI {:
                 RESULT = new ASTDefine(i,e);
                 :};
 
-idList ::= idList:l COMMA ID:i {:
+idList ::= ID:i idListAux:l {:
                     l.add(i);
                     RESULT = l;
-                :} |
-            ID:i {:
-                    ArrayList<String> l = new ArrayList<>();
+                :};
+
+idListAux ::= COMMA ID:i idListAux:l {:
                     l.add(i);
                     RESULT = l;
                 :} |
@@ -179,9 +184,9 @@ binding ::= ID:i EQUAL exp:e {:
              :};
 
 
-expList ::= valExp:l expListAux:a {: a.add(l); RESULT = a; :};
+expList ::= valExp:l COMMA expListAux:a {: a.add(l); RESULT = a; :};
 
-expListAux ::= COMMA valExp:v expListAux:a {:
+expListAux ::= valExp:v expListAux:a {:
                     a.add(v);
                     RESULT = a;
                     :} |
@@ -190,13 +195,59 @@ expListAux ::= COMMA valExp:v expListAux:a {:
 valExp ::= LET LPAREN bindings:b RPAREN expSeq:s {:
                 RESULT = new ASTLet(b,s);
                 :}|
-           CALL LPAREN ID:i COMMA expList:l RPAREN {: 
-                RESULT= ASTProcCall(i,l);
+           CALL LPAREN ID:i COMMA exp:l RPAREN {: 
+                RESULT= new ASTProcCall(i,l);
                 :}|
-           IF boolExp:e THEN expSeq:s {:
+           CASE LBRACK LBRACE predList:p RBRACE RBRACK {:
+                    RESULT = new ASTCase(p);
+                :}|
+            LBRACK expSeq:e RBRACK {:
+                    RESULT = e;
+                :}|
+            LPAREN expList:e RPAREN {:
+                    RESULT = e;
+                :}|
+           condition:c {: RESULT=c; :}|
+           expression:e {: RESULT = e; :};
+
+condition ::= IF boolExp:e THEN expSeq:s {:
                     RESULT = new ASTConditional(e,s);
                 :} |
-           expression:e {: RESULT = e; :};
+              IF boolExp:e THEN expSeq:s LBRACE ELSE expSeq:f RBRACE{:
+                    RESULT = new ASTConditional(e,s,f);
+                :};
+
+predList ::= pred:p COMMA  predList:l {:
+                    l.add(p);
+                    RESULT = l;
+                :} |
+             empty {: RESULT = new ArrayList<Clause>(); :};
+
+pred ::= boolExp:b COLON exp:e {:
+                    RESULT = new Clause(b,e);
+                :}|
+         ELSE COLON  exp:e {:
+                    RESULT = new Clause(new ASTExpLit(PrimitiveValue.make(true)),e);
+                :};
+
+sysExp ::= READ LPAREN RPAREN {:
+                    RESULT = new ASTRead();
+                :}|
+           READINT LPAREN RPAREN {:
+                    RESULT = new ASTReadInt();
+                :}|
+           PRINT LPAREN exp:e RPAREN {:
+                    RESULT = new ASTPrint(e);
+                :}|
+           PRINTLN LPAREN exp:e RPAREN {:
+                    RESULT = new ASTPrintLn(e);
+                :}|
+           LCOMMENT STR:s {:
+                    RESULT = new ASTComment(s);
+                :}|
+           SCOMMENT STR:s ECOMMENT {:
+                    RESULT = new ASTComment(s);
+                :};
 
 boolExp ::= boolExp:log OR andExp:le {:
                 RESULT = new ASTExpOr(log,le);
@@ -237,7 +288,11 @@ bitLog ::= bitLog:b BITAND expression:e {:
             :} |
             bitLog:b BITOR expression:e {:
                     RESULT = new ASTBitOr(b,e);
-            :};
+            :} |
+            boolVal:b {: RESULT = b; :};
+
+boolVal ::= TRUE {: RESULT = new ASTExpLit(PrimitiveValue.make(true)); :} |
+            FALSE {: RESULT = new ASTExpLit(PrimitiveValue.make(false)); :};
 
 expression ::= 	expression:e PLUS term:t {:
 			RESULT = new ASTExpAdd(e, t); :} |
@@ -258,13 +313,16 @@ bitNeg ::= BITNOT factor:f {: RESULT = new ASTBitNot(f); :} |
 
 factor ::= number:ilit {: RESULT = new ASTExpLit(ilit); :} |
            ID:v {: RESULT = new ASTExpVar(v); :} |
+           STR:s {: RESULT = new ASTExpStr(s); :} |
+           CHAR:c {: RESULT = new ASTExpChar(c); :} |
+           UNI:u {: RESULT = new ASTExpUni(u); :} |
 	   LPAREN expression:e RPAREN {: RESULT = e; :}	|
            LBRACE expression:e RBRACE {: RESULT = e; :} |
            LAZY LPAREN expression:e RPAREN {: RESULT = new ASTLazyExp(e); :};
 
 number ::= INT:i {: RESULT = PrimitiveValue.make(i); :} |
            HEX:h {: RESULT = PrimitiveValue.make(h); :} |
-           BINARY: b {: RESULT = PrimitiveValue.Make(b); :} |
+           BINARY: b {: RESULT = PrimitiveValue.make(b); :} |
            FLOAT:r {: RESULT = PrimitiveValue.make(r); :} ;
 
 empty ::= ;
