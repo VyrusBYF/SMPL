@@ -69,7 +69,7 @@ alphanum = {alpha}|{num}
 
 alphanumsym = {alphanum}|{symbols} 
 
-strng = {alphanumsym}|[\\]|[\n]|[\t]
+character = {alphanumsym}|[\\]|[\n]|[\t]
 
 %%
 
@@ -184,12 +184,12 @@ strng = {alphanumsym}|[\\]|[\n]|[\t]
                             return new Symbol(sym.ID, yytext());
                             }
 
-    {dq}{1}{strng}{dq}{1} {
+    {dq}{1}{character}*{dq}{1} {
                             // STRING CONSTANT
                             return new Symbol(sym.STR, yytext());
                             }
 
-   {sq}{1}{strng}{1}{sq}{1} {
+   {sq}{1}{character}{1}{sq}{1} {
                             // CHARACTER LITERALS
                             return new Symbol(sym.CHAR, yytext());
                             }
