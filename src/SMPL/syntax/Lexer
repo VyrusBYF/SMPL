@@ -59,7 +59,7 @@ bin = [01]
 
 hex = {num}|[a-fA-F]
 
-symbols = [^0-9a-zA-Z\(\)\{\}\[\]\"\'\,\:]
+symbols = [^0-9a-zA-Z\(\)\{\}\[\]\"\'\,\:\b\f\n\r\t\s]
 
 dq = [\"]
 
@@ -101,6 +101,7 @@ strng = {alphanumsym}|[\\]|[\n]|[\t]
 <YYINITIAL>	{ws}+">="{ws}+  {return new Symbol(sym.MRE);}
 <YYINITIAL>	{ws}+"!="{ws}+  {return new Symbol(sym.NE);}
 
+<YYINITIAL>	{ws}+":="{ws}+  {return new Symbol(sym.ASSIGN);}
 <YYINITIAL>	{ws}+"@"{ws}+   {return new Symbol(sym.CONCAT);}
 
 <YYINITIAL>	"("             {return new Symbol(sym.LPAREN);}
@@ -144,28 +145,28 @@ strng = {alphanumsym}|[\\]|[\n]|[\t]
 <YYINITIAL>	"read"          {return new Symbol(sym.READ);}
 <YYINITIAL>	"readint"       {return new Symbol(sym.READINT);}
 
-<YYINITIAL>     "//"            {return new Symbol(sym.LCOMMENT);}
-<YYINITIAL>     "/*"            {return new Symbol(sym.SCOMMENT);}
-<YYINITIAL>     "*/"            {return new Symbol(sym.ECOMMENT);}
+<YYINITIAL>     "//"{ws}+       {return new Symbol(sym.LCOMMENT);}
+<YYINITIAL>     "/*"{ws}+       {return new Symbol(sym.SCOMMENT);}
+<YYINITIAL>     {ws}+"*/"       {return new Symbol(sym.ECOMMENT);}
 
 <YYINITIAL>	"#t"            {return new Symbol(sym.TRUE);}
 <YYINITIAL>	"#f"            {return new Symbol(sym.FALSE);}
 
 <YYINITIAL>	"#e"            {return new Symbol(sym.ELIST);}
 
-<YYINITIAL>     {sign}{ws}+{num}+          {
+<YYINITIAL>     {num}+          {
                                 // INTEGER
                                 return new Symbol(sym.INT, 
                                     new Integer(yytext()));
                                 }
 
-<YYINITIAL>    "#b""0b"{bin}+   {
+<YYINITIAL>    "#b"{bin}+   {
                                 // BINARY
                                 return new Symbol(sym.BINARY, 
                                     new Integer(yytext()));
                                 }
 
-<YYINITIAL>    "#x""0x"{hex}+   {
+<YYINITIAL>    "#x"{hex}+   {
                                 // HEXADECIMAL
                                 return new Symbol(sym.HEX, 
                                     new Integer(yytext()));
@@ -178,7 +179,7 @@ strng = {alphanumsym}|[\\]|[\n]|[\t]
 			 	         new Double(yytext()));
                                 }
 
-<YYINITIAL>    ^[^#]{alphanumsym}*{alphasym}+{alphanumsym}*
+<YYINITIAL>    {alpha}+{alphanumsym}*
                                 {
                                 // VARIABLE
                                 return new Symbol(sym.ID, yytext());
