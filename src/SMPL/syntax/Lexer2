@@ -75,11 +75,10 @@ character = {alphanumsym}|[\\]|[\n]|[\t]
 
 <YYINITIAL> {nl}    {
                         //skip newline, but reset char counter
-            System.out.printf("newline\n", yytext());
+            yycolumn = 0;
             }
 <YYINITIAL> {ws}    {
-                        
-            System.out.printf("whitespace\n", yytext());
+             //skip whitespace
             }
 
 <YYINITIAL> {
