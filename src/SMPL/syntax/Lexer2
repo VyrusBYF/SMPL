@@ -1,0 +1,207 @@
+package SMPL.syntax;
+
+/* Specification for SMPL tokens */
+
+// user customisations
+import java_cup.runtime.*;
+
+// Jlex directives
+%%
+    
+%cup
+%public
+
+%class SMPLLexer
+
+%type java_cup.runtime.Symbol
+
+%eofval{
+	return new Symbol(sym.EOF);
+%eofval}
+
+%eofclose false
+
+%char
+%column
+%line
+
+%{
+    public int getChar() {
+	return yychar + 1;
+    }
+
+    public int getColumn() {
+    	return yycolumn + 1;
+    }
+
+    public int getLine() {
+	return yyline + 1;
+    }
+
+    public String getText() {
+	return yytext();
+    }
+%}
+
+nl = [\n\r]
+
+cc = ([\b\f]|{nl})
+
+ws = {cc}|[\t]|[\s]
+
+alpha = [a-zA-Z_]
+
+num = [0-9]
+
+sign = [\-]{ws}+|[\+]{ws}+|[^$]
+
+bin = [01]
+
+hex = {num}|[a-fA-F]
+
+symbols = [^0-9a-zA-Z\(\)\{\}\[\]\"\'\,\:\b\f\n\r\t\s]
+
+dq = [\"]
+
+sq = [\']
+
+alphanum = {alpha}|{num}
+
+alphanumsym = {alphanum}|{symbols} 
+
+strng = {alphanumsym}|[\\]|[\n]|[\t]
+
+%%
+
+<YYINITIAL> {nl}    {
+                        //skip newline, but reset char counter
+            System.out.printf("newline\n", yytext());
+            }
+<YYINITIAL> {ws}    {
+                        
+            System.out.printf("whitespace\n", yytext());
+            }
+
+<YYINITIAL> {
+
+    {ws}+"+"{ws}+  {return new Symbol(sym.PLUS);}
+    {ws}+"-"{ws}+  {return new Symbol(sym.MINUS);}
+    {ws}+"*"{ws}+  {return new Symbol(sym.MUL);}
+    {ws}+"/"{ws}+  {return new Symbol(sym.DIV);}
+    {ws}+"%"{ws}+  {return new Symbol(sym.MOD);}
+    {ws}+"^"{ws}+  {return new Symbol(sym.EXP);}
+
+    {ws}+"&"{ws}+   {return new Symbol(sym.BITAND);}
+    {ws}+"|"{ws}+   {return new Symbol(sym.BITOR);}
+    {ws}+"~"{ws}+   {return new Symbol(sym.BITNOT);}
+
+    {ws}+"="{ws}+   {return new Symbol(sym.EQUAL);}
+    {ws}+">"{ws}+   {return new Symbol(sym.MORE);}
+    {ws}+"<"{ws}+   {return new Symbol(sym.LESS);}
+    {ws}+"<="{ws}+  {return new Symbol(sym.LRE);}
+    {ws}+">="{ws}+  {return new Symbol(sym.MRE);}
+    {ws}+"!="{ws}+  {return new Symbol(sym.NE);}
+
+    {ws}+":="{ws}+  {return new Symbol(sym.ASSIGN);}
+    {ws}+"@"{ws}+   {return new Symbol(sym.CONCAT);}
+
+    "("             {return new Symbol(sym.LPAREN);}
+    ")"             {return new Symbol(sym.RPAREN);}
+     "{"            {return new Symbol(sym.LBRACK);}
+     "}"            {return new Symbol(sym.RBRACK);}
+    "["             {return new Symbol(sym.LBRACE);}
+    "]"             {return new Symbol(sym.RBRACE);}
+
+    ","             {return new Symbol(sym.COMMA);}
+    ":"             {return new Symbol(sym.COLON);}
+    ";"             {return new Symbol(sym.SEMI);}
+    {ws}+"."{ws}+   {return new Symbol(sym.DOT);}
+
+    "pair"          {return new Symbol(sym.PAIR);}
+    "car"           {return new Symbol(sym.CAR);}
+    "cdr"           {return new Symbol(sym.CDR);}
+    "pair?"         {return new Symbol(sym.ISPAIR);}
+    "list"          {return new Symbol(sym.LIST);}
+    "size"          {return new Symbol(sym.SIZE);}
+    "eqv?"          {return new Symbol(sym.ISEQV);}
+    "equal?"        {return new Symbol(sym.ISEQUAL);}
+    "substr"        {return new Symbol(sym.SUBSTR);}
+
+    "let"           {return new Symbol(sym.LET);}
+    "proc"          {return new Symbol(sym.PROCEDURE);}
+    "call"          {return new Symbol(sym.CALL);}
+    "def"           {return new Symbol(sym.DEFINE);}
+    "if"            {return new Symbol(sym.IF);}
+    "then"          {return new Symbol(sym.THEN);}
+    "else"          {return new Symbol(sym.ELSE);}
+    "lazy"          {return new Symbol(sym.LAZY);}
+    "case"          {return new Symbol(sym.CASE);}
+
+    "and"           {return new Symbol(sym.AND);}
+    "or"            {return new Symbol(sym.OR);}
+    "not"           {return new Symbol(sym.NOT);}
+
+    "print"         {return new Symbol(sym.PRINT);}
+    "println"       {return new Symbol(sym.PRINTLN);}
+    "read"          {return new Symbol(sym.READ);}
+    "readint"       {return new Symbol(sym.READINT);}
+
+    "//"{ws}+        {return new Symbol(sym.LCOMMENT);}
+    "/*"{ws}+        {return new Symbol(sym.SCOMMENT);}
+    {ws}+"*/"        {return new Symbol(sym.ECOMMENT);}
+
+    "#t"            {return new Symbol(sym.TRUE);}
+    "#f"            {return new Symbol(sym.FALSE);}
+
+    "#e"            {return new Symbol(sym.ELIST);}
+
+   {num}+          {
+                    // INTEGER
+                    return new Symbol(sym.INT, 
+                        new Integer(yytext()));
+                    }
+
+    "#b"{bin}+  {
+                // BINARY
+                return new Symbol(sym.BINARY, 
+                    new Integer(yytext()));
+                }
+
+    "#x"{hex}+   {
+                // HEXADECIMAL
+                return new Symbol(sym.HEX, 
+                    new Integer(yytext()));
+                }
+
+  {sign}[\.]{num}+|{sign}{num}+[\.]{num}*  {
+                                            // FLOAT
+                                            return new Symbol(sym.FLOAT, 
+                                            new Double(yytext()));
+                                            }
+
+   {alpha}+{alphanumsym}*  {
+                            // VARIABLE
+                            return new Symbol(sym.ID, yytext());
+                            }
+
+    {dq}{1}{strng}{dq}{1} {
+                            // STRING CONSTANT
+                            return new Symbol(sym.STR, yytext());
+                            }
+
+   {sq}{1}{strng}{1}{sq}{1} {
+                            // CHARACTER LITERALS
+                            return new Symbol(sym.CHAR, yytext());
+                            }
+
+    "#u"{hex}{4}    {
+                    // UNICODE CHARACTERS
+                    return new Symbol(sym.UNI, yytext());
+                    }
+
+   .           {
+                // Unknown token (leave this in the last position)
+                throw new Exception(yytext(), getLine(),
+                getColumn());
+            }
+}
