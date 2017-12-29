@@ -3,19 +3,19 @@ package SMPL.syntax;
 import SMPL.semantics.Visitor;
 import java.util.*;
 
-public class ASTStmtSequence extends ASTStatement {
+public class ASTExpList extends ASTExp {
 
     ArrayList<ASTExp> seq;		// sequence of commands
 
-    public ASTStmtSequence() {
+    public ASTExpList() {
 	seq = new ArrayList<>();
     }
     
-    public ASTStmtSequence(ArrayList<ASTExp> stmts) {
+    public ASTExpList(ArrayList<ASTExp> stmts) {
         seq = stmts;
     }
 
-    public ASTStmtSequence(ASTExp s) {
+    public ASTExpList(ASTExp s) {
 	this();
 	seq.add(s);
     }
@@ -24,12 +24,12 @@ public class ASTStmtSequence extends ASTStatement {
 	return seq;
     }
 
-    public ASTStmtSequence add(ASTExp s) {
+    public ASTExpList add(ASTExp s) {
 	seq.add(s);
 	return this;
     }
     
-    public ASTStmtSequence add(ArrayList<ASTExp> s) {
+    public ASTExpList add(ArrayList<ASTExp> s) {
 	seq.addAll(s);
 	return this;
     }
@@ -37,7 +37,7 @@ public class ASTStmtSequence extends ASTStatement {
     @Override
     public Object visit(Visitor v, Object arg) throws Exception
     {
-	return v.visitASTStmtSequence(this, arg);
+	return v.visitASTExpList(this, arg);
     }
 
     @Override

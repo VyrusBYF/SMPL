@@ -9,25 +9,30 @@ package SMPL.values;
  * @author newts
  */
 public class PrimFloat extends PrimitiveValue {
-    double value;
+    Double value;
     
     public PrimFloat(double val) {
         super(PrimitiveTypes.INTEGER);
-        value = val;
+        value = new Double(val);
     }
     
     @Override
     public boolean isInt() {
-        return true;
+        return false;
     }
     
     @Override
-    public int intValue() {
-        return (int) value;
+    public Object getVal() {
+        return value;
     }
     
     @Override
-    public double floatValue() {
+    public Integer intValue() {
+        return value.intValue();
+    }
+    
+    @Override
+    public Double floatValue() {
         return value;
     }
     

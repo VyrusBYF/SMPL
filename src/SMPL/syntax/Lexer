@@ -59,7 +59,7 @@ bin = [01]
 
 hex = {num}|[a-fA-F]
 
-symbols = [^0-9a-zA-Z\(\)\{\}\[\]\"\'\,\:]
+symbols = [^0-9a-zA-Z\(\)\{\}\[\]\"\'\,\:\b\f\n\r\t\s]
 
 dq = [\"]
 
@@ -88,30 +88,33 @@ strng = {alphanumsym}|[\\]|[\n]|[\t]
 <YYINITIAL>	{ws}+"*"{ws}+   {return new Symbol(sym.MUL);}
 <YYINITIAL>	{ws}+"/"{ws}+   {return new Symbol(sym.DIV);}
 <YYINITIAL>	{ws}+"%"{ws}+   {return new Symbol(sym.MOD);}
-<YYINITIAL>     "^"             {return new Symbol(sym.EXP);}
+<YYINITIAL>     {ws}+"^"{ws}+   {return new Symbol(sym.EXP);}
 
-<YYINITIAL>	"&"             {return new Symbol(sym.BITAND);}
-<YYINITIAL>	"|"             {return new Symbol(sym.BITOR);}
-<YYINITIAL>	"~"             {return new Symbol(sym.BITNOT);}
+<YYINITIAL>	{ws}+"&"{ws}+   {return new Symbol(sym.BITAND);}
+<YYINITIAL>	{ws}+"|"{ws}+   {return new Symbol(sym.BITOR);}
+<YYINITIAL>	{ws}+"~"{ws}+   {return new Symbol(sym.BITNOT);}
 
-<YYINITIAL>	"="             {return new Symbol(sym.EQUAL);}
-<YYINITIAL>	">"             {return new Symbol(sym.MORE);}
-<YYINITIAL>	"<"             {return new Symbol(sym.LESS);}
-<YYINITIAL>	"<="            {return new Symbol(sym.LRE);}
-<YYINITIAL>	">="            {return new Symbol(sym.MRE);}
-<YYINITIAL>	"!="            {return new Symbol(sym.NE);}
+<YYINITIAL>	{ws}+"="{ws}+   {return new Symbol(sym.EQUAL);}
+<YYINITIAL>	{ws}+">"{ws}+   {return new Symbol(sym.MORE);}
+<YYINITIAL>	{ws}+"<"{ws}+   {return new Symbol(sym.LESS);}
+<YYINITIAL>	{ws}+"<="{ws}+  {return new Symbol(sym.LRE);}
+<YYINITIAL>	{ws}+">="{ws}+  {return new Symbol(sym.MRE);}
+<YYINITIAL>	{ws}+"!="{ws}+  {return new Symbol(sym.NE);}
 
-<YYINITIAL>	"@"             {return new Symbol(sym.CONCAT);}
+<YYINITIAL>	{ws}+":="{ws}+  {return new Symbol(sym.ASSIGN);}
+<YYINITIAL>	{ws}+"@"{ws}+   {return new Symbol(sym.CONCAT);}
 
 <YYINITIAL>	"("             {return new Symbol(sym.LPAREN);}
 <YYINITIAL>	")"             {return new Symbol(sym.RPAREN);}
-
+<YYINITIAL>     "{"             {return new Symbol(sym.LBRACK);}
+<YYINITIAL>     "}"             {return new Symbol(sym.RBRACK);}
 <YYINITIAL>	"["             {return new Symbol(sym.LBRACE);}
 <YYINITIAL>	"]"             {return new Symbol(sym.RBRACE);}
 
 <YYINITIAL>	","             {return new Symbol(sym.COMMA);}
 <YYINITIAL>	":"             {return new Symbol(sym.COLON);}
 <YYINITIAL>	";"             {return new Symbol(sym.SEMI);}
+<YYINITIAL>     {ws}+"."{ws}+   {return new Symbol(sym.DOT);}
 
 <YYINITIAL>	"pair"          {return new Symbol(sym.PAIR);}
 <YYINITIAL>	"car"           {return new Symbol(sym.CAR);}
@@ -129,6 +132,7 @@ strng = {alphanumsym}|[\\]|[\n]|[\t]
 <YYINITIAL>	"def"           {return new Symbol(sym.DEFINE);}
 <YYINITIAL>	"if"            {return new Symbol(sym.IF);}
 <YYINITIAL>	"then"          {return new Symbol(sym.THEN);}
+<YYINITIAL>     "else"          {return new Symbol(sym.ELSE);}
 <YYINITIAL>	"lazy"          {return new Symbol(sym.LAZY);}
 <YYINITIAL>	"case"          {return new Symbol(sym.CASE);}
 
@@ -141,24 +145,28 @@ strng = {alphanumsym}|[\\]|[\n]|[\t]
 <YYINITIAL>	"read"          {return new Symbol(sym.READ);}
 <YYINITIAL>	"readint"       {return new Symbol(sym.READINT);}
 
+<YYINITIAL>     "//"{ws}+       {return new Symbol(sym.LCOMMENT);}
+<YYINITIAL>     "/*"{ws}+       {return new Symbol(sym.SCOMMENT);}
+<YYINITIAL>     {ws}+"*/"       {return new Symbol(sym.ECOMMENT);}
+
 <YYINITIAL>	"#t"            {return new Symbol(sym.TRUE);}
 <YYINITIAL>	"#f"            {return new Symbol(sym.FALSE);}
 
 <YYINITIAL>	"#e"            {return new Symbol(sym.ELIST);}
 
-<YYINITIAL>     {sign}{ws}+{num}+          {
+<YYINITIAL>     {num}+          {
                                 // INTEGER
                                 return new Symbol(sym.INT, 
                                     new Integer(yytext()));
                                 }
 
-<YYINITIAL>    "#b""0b"{bin}+   {
+<YYINITIAL>    "#b"{bin}+   {
                                 // BINARY
                                 return new Symbol(sym.BINARY, 
                                     new Integer(yytext()));
                                 }
 
-<YYINITIAL>    "#x""0x"{hex}+   {
+<YYINITIAL>    "#x"{hex}+   {
                                 // HEXADECIMAL
                                 return new Symbol(sym.HEX, 
                                     new Integer(yytext()));
@@ -171,7 +179,7 @@ strng = {alphanumsym}|[\\]|[\n]|[\t]
 			 	         new Double(yytext()));
                                 }
 
-<YYINITIAL>    ^[^#]{alphanumsym}*{alphasym}+{alphanumsym}*
+<YYINITIAL>    {alpha}+{alphanumsym}*
                                 {
                                 // VARIABLE
                                 return new Symbol(sym.ID, yytext());

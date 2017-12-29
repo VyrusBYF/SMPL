@@ -9,31 +9,43 @@ import java.util.ArrayList;
   Created on Sat Oct 12 03:13:16 2013
 */
 public class ASTProcDef extends ASTStatement {
-  String name;
+  String rest;
   ArrayList<String> ids;
-  ASTStmtSequence body;
+  ASTExpSequence body;
 
-  public ASTProcDef (String name, ArrayList<String> ids, ASTStmtSequence body) {
-    this.name = name;
+  
+  public ASTProcDef (ArrayList<String> ids, ASTExpSequence body) {
+    this.ids = ids;
+    this.body = body;
+  }
+  
+  public ASTProcDef (String id, ASTExpSequence body) {
+    ids = new ArrayList<String>();
+    ids.add(id);
+    this.body = body;
+  }
+  
+  public ASTProcDef (ArrayList<String> ids, String rest, ASTExpSequence body) {
+    this.rest = rest;
     this.ids = ids;
     this.body = body;
   }
 
-  public String getName() {
-    return name;
+  public String getRest() {
+    return rest;
   }
   
   public ArrayList<String> getIds() {
       return ids;
   }
 
-  public ASTStmtSequence getBody() {
+  public ASTExpSequence getBody() {
     return body;
   }
 
   @Override
-  public Object visit(Visitor v, Object state) throws Exception {
-    return v.visitASTProcDef(this, state);
+  public Object visit(Visitor v, Object arg) throws Exception {
+    return v.visitASTProcDef(this, arg);
   }
 
 }

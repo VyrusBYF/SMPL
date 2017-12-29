@@ -1,6 +1,7 @@
 package SMPL.syntax;
 
 import SMPL.semantics.Visitor;
+import java.util.ArrayList;
 
 /**
   Class ASTDefine.
@@ -8,15 +9,21 @@ import SMPL.semantics.Visitor;
   Created on Sat Oct 12 03:13:16 2013
 */
 public class ASTDefine extends ASTStatement {
-  String var;
+  ArrayList<String> var;
   ASTExp valueExp;
 
   public ASTDefine (String var,ASTExp valueExp) {
+    this.var = new ArrayList<>();
+    this.var.add(var);
+    this.valueExp = valueExp;
+  }
+  
+  public ASTDefine (ArrayList<String> var,ASTExp valueExp) {
     this.var = var;
     this.valueExp = valueExp;
   }
 
-  public String getVar() {
+  public ArrayList<String> getVar() {
     return var;
   }
 
@@ -25,8 +32,8 @@ public class ASTDefine extends ASTStatement {
   }
 
   @Override
-  public Object visit(Visitor v, Object state) throws Exception {
-    return v.visitASTDefine(this, state);
+  public Object visit(Visitor v, Object arg) throws Exception {
+    return v.visitASTDefine(this, arg);
   }
 
 }

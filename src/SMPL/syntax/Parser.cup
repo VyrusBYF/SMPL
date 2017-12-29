@@ -74,6 +74,7 @@ non terminal ASTExp proc;
 non terminal ASTExp def;
 
 //non terminal ASTExpList expList;
+
 non terminal ASTExpList expListAux;
 non terminal ASTExp expression;
 non terminal ASTExp valExp;
@@ -97,7 +98,6 @@ non terminal PrimitiveValue number;
 non terminal ArrayList<String> idList;
 non terminal ArrayList<String> idListAux;
 non terminal empty;
-
 
 /* Grammar rules */
 
@@ -124,9 +124,6 @@ stmt ::= proc:p {:
          valExp:v SEMI {:
                 RESULT = v; 
                 :}
-         /*expList:l SEMI {:
-                RESULT = l; 
-                :}*/
                 ;
 
 proc ::= PROCEDURE LPAREN LBRACE idList:id RBRACE RPAREN expSeq:l SEMI {:
@@ -176,6 +173,7 @@ binding ::= ID:i EQUAL exp:e {:
 
 //expList ::= valExp:l COMMA expListAux:a {: a.add(l); RESULT = a; :};
 
+
 expListAux ::= valExp:v expListAux:a {:
                     a.add(v);
                     RESULT = a;
@@ -188,11 +186,9 @@ valExp ::= LET LPAREN bindings:b RPAREN expSeq:s {:
            CALL LPAREN ID:i COMMA exp:l RPAREN {: 
                     RESULT= new ASTProcCall(i,l);
                 :}|
-           /*ID:i LPAREN exp:l RPAREN {:
-                    RESULT = new ASTProcCall(i,l);
-                :}|*/
            ID:i factor:f {:
                     RESULT = new ASTProcCall(i,f);
+
                 :}|
            CASE LBRACK LBRACE predList:p RBRACE RBRACK {:
                     RESULT = new ASTCase(p);
@@ -203,6 +199,7 @@ valExp ::= LET LPAREN bindings:b RPAREN expSeq:s {:
             /*LPAREN expList:e RPAREN {:
                     RESULT = e;
                 :}|*/
+
            condition:c {: RESULT=c; :}|
            expression:e {: RESULT = e; :};
 

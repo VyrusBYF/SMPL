@@ -25,8 +25,8 @@ public class ASTExpAnd extends ASTExp {
   }
 
   @Override
-  public Object visit(Visitor v, Object state) throws Exception {
-    return v.visitASTExpAnd(this, state);
+  public Object visit(Visitor v, Object arg) throws Exception {
+    return v.visitASTExpAnd(this, arg);
   }
 
 }

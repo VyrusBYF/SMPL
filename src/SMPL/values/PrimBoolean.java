@@ -11,19 +11,26 @@ package SMPL.values;
  */
 public class PrimBoolean extends PrimitiveValue {
     
-    boolean bool;
+    Boolean bool;
     
     public PrimBoolean(boolean bool) {
         super(PrimitiveTypes.BOOLEAN);
         this.bool=bool;
     }
     
-    public boolean getBool() {
+    @Override
+    public Boolean getBool() {
         return bool;
     }
     
+    @Override
     public boolean isBool() {
         return true;
+    }
+    
+    @Override
+    public Object getVal() {
+        return bool;
     }
     
       @Override

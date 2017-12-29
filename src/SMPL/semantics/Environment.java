@@ -34,14 +34,14 @@ public class Environment {
      * for the identifiers.  Note that the two arrays must
      * have the same length.
      */
-    public Environment(String[] ids, int[] values) {
+    public Environment(String[] ids, Object[] values) {
 	dictionary = new HashMap();
 	for (int i = 0; i < ids.length; i++) {
 	    put(ids[i], values[i]);
 	}
     }
 
-    public Environment(String[] ids, int[] values,
+    public Environment(String[] ids, Object[] values,
 		       Environment p) {
 	parent = p;
 	dictionary = new HashMap();
@@ -75,22 +75,22 @@ public class Environment {
     }
 
     /**
-     * Return the int associated with the given identifier.
+     * Return the value associated with the given identifier.
      *
      * @param id the identifier.
-     * @return the int associated with the identifier in
+     * @return the value associated with the identifier in
      * this environment.
      * @exception Exception if <code>id</code> is unbound
      */
-    public int get(String id) throws Exception {
-	Integer result = (Integer) dictionary.get(id);
+    public Object get(String id) throws Exception {
+	Object result = dictionary.get(id);
 	if (result == null)
 	    if (parent == null)
 		throw new Exception("Unbound variable " + id);
 	    else
 		return parent.get(id);
 	else
-	    return result.intValue();
+	    return result;
     }
 
     public Closure getFn(String id) throws Exception {
