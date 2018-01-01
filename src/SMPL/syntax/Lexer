@@ -26,6 +26,10 @@ import java_cup.runtime.*;
 %line
 
 %{
+    StringBuffer string = new StringBuffer();
+
+    java.nio.IntBuffer bin = java.nio.IntBuffer.allocate(1);
+
     public int getChar() {
 	return yychar + 1;
     }
@@ -41,11 +45,21 @@ import java_cup.runtime.*;
     public String getText() {
 	return yytext();
     }
+
+    private Symbol symbol(int type) {
+        return new Symbol(type, yyline, yycolumn);
+      }
+
+    private Symbol symbol(int type, Object value) {
+        return new Symbol(type, yyline, yycolumn, value);
+      }
 %}
 
 nl = [\n\r]
 
 cc = ([\b\f]|{nl})
+
+hs = [ ]|[\t] 
 
 ws = {cc}|[\t]|[\s]
 
@@ -53,25 +67,28 @@ alpha = [a-zA-Z_]
 
 num = [0-9]
 
-sign = [\-]{ws}+|[\+]{ws}+|[^$]
+symbols = [^0-9a-zA-Z\(\)\{\}\[\]\"\'\,\:\s]
 
-bin = [01]
+strt = [^\(\)\{\}\[\]\"\'\,\:\s\#]
 
-hex = {num}|[a-fA-F]
-
-symbols = [^0-9a-zA-Z\(\)\{\}\[\]\"\'\,\:\b\f\n\r\t\s]
-
-dq = [\"]
-
-sq = [\']
+nonDig = [^\(\)\{\}\[\]\"\'\,\:\s\#0-9]
 
 alphanum = {alpha}|{num}
 
 alphanumsym = {alphanum}|{symbols} 
 
-alphasym = {alpha}|{symbols}
+alphasym = {alpha}|{nonDig}
 
-strng = {alphanumsym}|[\\]|[\n]|[\t]
+lcomment = [^\n\r]
+
+comment = [^]
+
+%state STRING
+%state BIN 
+%state HEX
+%state CHAR
+%state UNI
+%state CHARA
 
 %%
 
@@ -89,6 +106,9 @@ strng = {alphanumsym}|[\\]|[\n]|[\t]
 <YYINITIAL>	{ws}+"/"{ws}+   {return new Symbol(sym.DIV);}
 <YYINITIAL>	{ws}+"%"{ws}+   {return new Symbol(sym.MOD);}
 <YYINITIAL>     {ws}+"^"{ws}+   {return new Symbol(sym.EXP);}
+
+<YYINITIAL>	"-"{ws}+        {return new Symbol(sym.UMINUS);}
+<YYINITIAL>	"+"{ws}+        {return new Symbol(sym.UPLUS);}
 
 <YYINITIAL>	{ws}+"&"{ws}+   {return new Symbol(sym.BITAND);}
 <YYINITIAL>	{ws}+"|"{ws}+   {return new Symbol(sym.BITOR);}
@@ -145,10 +165,6 @@ strng = {alphanumsym}|[\\]|[\n]|[\t]
 <YYINITIAL>	"read"          {return new Symbol(sym.READ);}
 <YYINITIAL>	"readint"       {return new Symbol(sym.READINT);}
 
-<YYINITIAL>     "//"{ws}+       {return new Symbol(sym.LCOMMENT);}
-<YYINITIAL>     "/*"{ws}+       {return new Symbol(sym.SCOMMENT);}
-<YYINITIAL>     {ws}+"*/"       {return new Symbol(sym.ECOMMENT);}
-
 <YYINITIAL>	"#t"            {return new Symbol(sym.TRUE);}
 <YYINITIAL>	"#f"            {return new Symbol(sym.FALSE);}
 
@@ -160,44 +176,90 @@ strng = {alphanumsym}|[\\]|[\n]|[\t]
                                     new Integer(yytext()));
                                 }
 
-<YYINITIAL>    "#b"{bin}+   {
-                                // BINARY
-                                return new Symbol(sym.BINARY, 
-                                    new Integer(yytext()));
-                                }
-
-<YYINITIAL>    "#x"{hex}+   {
-                                // HEXADECIMAL
-                                return new Symbol(sym.HEX, 
-                                    new Integer(yytext()));
-                                }
-
-<YYINITIAL>    {sign}[\.]{num}+|{sign}{num}+[\.]{num}* 	
+<YYINITIAL>    [\.]{num}+|{num}+[\.]{num}* 	
                                 {
                                 // FLOAT
                                 return new Symbol(sym.FLOAT, 
 			 	         new Double(yytext()));
                                 }
 
-<YYINITIAL>    {alpha}+{alphanumsym}*
+<YYINITIAL>    {strt}{alphanumsym}*{alphasym}+{alphanumsym}*|{alphasym}
                                 {
                                 // VARIABLE
                                 return new Symbol(sym.ID, yytext());
                                 }
 
-<YYINITIAL>    {dq}{1}{strng}{dq}{1} 
+ <YYINITIAL>    "//"{hs}+{lcomment}+|"/*"{ws}+{comment}+{ws}+"*/"       
                                 {
-                                // STRING CONSTANT
-                                return new Symbol(sym.STR, yytext());
-                                }
+                                // COMMENT
+                                return new Symbol(sym.COMMENT, yytext());
+                                } 
 
-<YYINITIAL>    {sq}{1}{strng}{1}{sq}{1} 
-                                {
-                                // CHARACTER LITERALS
-                                return new Symbol(sym.CHAR, yytext());
-                                }
+<YYINITIAL>    "#b"             { string.setLength(0); yybegin(BIN); }
 
-<YYINITIAL>    "#u"{hex}{4}     {
-                                // UNICODE CHARACTERS
-                                return new Symbol(sym.UNI, yytext());
-                                }
+<YYINITIAL>    "#x"             { string.setLength(0); yybegin(HEX); }
+
+<YYINITIAL>    "#u"             { string.setLength(0); yybegin(UNI); }
+
+<YYINITIAL>    "#c"             { string.setLength(0); yybegin(CHARA); }
+
+<YYINITIAL>    \"               { string.setLength(0); yybegin(STRING); }
+
+<YYINITIAL>    \'               { string.setLength(0); yybegin(CHAR); }
+
+
+<BIN> {
+      [^01]                        {yybegin(YYINITIAL); 
+                                    return symbol(sym.BINARY, 
+                                    string.toString()); }
+      [01]+                       { string.append("#b"+yytext()); }
+    }
+
+<HEX> {
+      [^0-9a-fA-F]                {yybegin(YYINITIAL); 
+                                    return symbol(sym.HEX, 
+                                    string.toString()); }
+      [0-9a-fA-F]+                 { string.append("#x"+yytext()); }
+      }
+
+<UNI> {
+      [^0-9a-fA-F]                {yybegin(YYINITIAL); 
+                                    return symbol(sym.UNI, 
+                                    string.toString()); }
+      [0-9a-fA-F]{4}               { string.append(yytext()); }
+      }
+
+<STRING> {
+      \"                        {yybegin(YYINITIAL); 
+                                    return symbol(sym.STR, 
+                                    string.toString()); }
+      [^\n\r\"\\]+              { string.append( yytext() ); }
+      \\t                       { string.append('\t'); }
+      \\n                       { string.append('\n'); }
+      \\r                       { string.append('\r'); }
+      \\\"                      { string.append('\"'); }
+      \\                        { string.append('\\'); }
+    }
+
+<CHAR> {
+      \'                        {yybegin(YYINITIAL); 
+                                    return symbol(sym.CHAR, 
+                                    string.toString()); }
+      [^\n\r\"\\]               { string.append( yytext() ); }
+      \\t                       { string.append('\t'); }
+      \\n                       { string.append('\n'); }
+      \\r                       { string.append('\r'); }
+      \\\"                      { string.append('\"'); }
+      \\                        { string.append('\\'); }
+    }
+
+<CHARA> {
+      [\s]                      {yybegin(YYINITIAL); 
+                                    return symbol(sym.CHAR, 
+                                    string.toString()); }
+      [^\n\r\\]                 { string.append( yytext() ); }
+      \\t                       { string.append('\t'); }
+      \\n                       { string.append('\n'); }
+      \\r                       { string.append('\r'); }
+      \\                        { string.append('\\'); }
+    }
