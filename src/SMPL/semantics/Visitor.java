@@ -27,10 +27,10 @@ import SMPL.syntax.ASTExpMul;
 import SMPL.syntax.ASTExpNE;
 import SMPL.syntax.ASTExpNot;
 import SMPL.syntax.ASTExpOr;
+import SMPL.syntax.ASTExpPow;
 import SMPL.syntax.ASTExpSequence;
 import SMPL.syntax.ASTExpStr;
 import SMPL.syntax.ASTExpSub;
-import SMPL.syntax.ASTExpUni;
 import SMPL.syntax.ASTExpVar;
 import SMPL.syntax.ASTExpWrapper;
 import SMPL.syntax.ASTLazyExp;
@@ -121,9 +121,9 @@ public interface Visitor {
 
     public Object visitASTExpStr(ASTExpStr exp, Object arg) throws Exception;
 
-    public Object visitASTExpUni(ASTExpUni exp, Object arg) throws Exception;
-
     public Object visitASTExpChar(ASTExpChar exp, Object arg) throws Exception;
 
     public Object visitASTExpWrapper(ASTExpWrapper exp, Object arg) throws Exception;
+
+    public Object visitASTExpPow(ASTExpPow exp, Object arg) throws Exception;
 }

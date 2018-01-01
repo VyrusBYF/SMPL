@@ -9,12 +9,20 @@ public class Closure {
     ASTExp body;
     String rest;
     Environment env;
+    String list;
 
     public Closure(ArrayList<String> params, ASTExp bod, Environment e) {
 	parameters = params;
 	body = bod;
 	env = e;
     }
+    
+    public Closure(String r, ASTExp bod, Environment e) {
+	list = r;
+	body = bod;
+	env = e;
+    }
+
 
     public Closure(ArrayList<String> params, ASTExp bod, Environment e,String r) {
 	parameters = params;
