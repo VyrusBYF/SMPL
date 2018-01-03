@@ -1,0 +1,47 @@
+def quickSort proc(alist)
+   quickSortHelper(alist,0,size(alist)-1);
+
+def quickSortHelper proc(alist,first,last)
+   if first<last
+   	then
+       splitpoint := partition proc(alist,first,last);
+       quickSortHelper(alist,first,splitpoint-1);
+       quickSortHelper(alist,splitpoint+1,last);
+
+
+def partition proc(alist,first,last)
+   pivotvalue := alist[first];
+
+   leftmark := first+1;
+   rightmark := last;
+
+   def done #f;
+   if done = #t
+	then
+		recursive(done);
+	else 
+		temp := alist[first];
+		alist[first] := alist[rightmark];
+		alist[rightmark] := temp;
+   
+def recursize proc(x)
+       if leftmark <= rightmark and alist[leftmark] <= pivotvalue
+       	then leftmark := leftmark + 1;
+
+       if alist[rightmark] >= pivotvalue and rightmark >= leftmark
+           then rightmark := rightmark -1;
+
+       if rightmark < leftmark
+           then x := #t;
+       else
+           temp := alist[leftmark];
+           alist[leftmark] := alist[rightmark];
+           alist[rightmark] := temp;
+        if x = #t
+			recursive(x);
+			
+alist = [34,26,63,17,73,31,24,65,20,90];
+quickSort(alist);
+print(alist);
+
+
